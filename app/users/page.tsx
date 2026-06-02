@@ -43,16 +43,16 @@ export default function UsersPage() {
   }, []);
 
   return (
-    <main className="min-h-screen p-8 bg-gray-100">
-      <div className="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-3xl font-bold">
+    <main className="min-h-screen bg-gray-100 p-4 text-gray-950 sm:p-8">
+      <div className="mx-auto w-full max-w-6xl rounded-lg bg-white p-4 text-gray-950 shadow sm:p-6">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h1 className="text-2xl font-bold text-gray-950 sm:text-3xl">
             Saved Data
           </h1>
 
           <Link
             href="/"
-            className="px-5 py-3 bg-black text-white rounded-lg cursor-pointer"
+            className="inline-flex justify-center rounded-lg bg-black px-5 py-3 text-center font-medium text-white"
           >
             Back to Parser
           </Link>
@@ -78,7 +78,7 @@ export default function UsersPage() {
 
         {!loading && !error && users.length > 0 && (
           <div className="overflow-x-auto">
-            <table className="w-full border border-collapse">
+            <table className="min-w-[760px] w-full border border-collapse text-sm text-gray-950 sm:text-base">
               <thead>
                 <tr className="bg-gray-200">
                   <th className="border p-3">Name</th>
@@ -97,7 +97,7 @@ export default function UsersPage() {
                   <tr key={user._id ?? `${user.mobile}-${user.pincode}-${index}`}>
                     <td className="border p-3">{user.name}</td>
                     <td className="border p-3">{user.mobile}</td>
-                    <td className="border p-3">{user.address}</td>
+                    <td className="border p-3 break-words">{user.address}</td>
                     <td className="border p-3">{user.pincode}</td>
                     <td className="border p-3">{user.city}</td>
                     <td className="border p-3">{user.state}</td>

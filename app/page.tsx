@@ -97,17 +97,17 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen p-8 bg-gray-100">
-      <div className="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow">
+    <main className="min-h-screen bg-gray-100 p-4 text-gray-950 sm:p-8">
+      <div className="mx-auto w-full max-w-4xl rounded-lg bg-white p-4 text-gray-950 shadow sm:p-6">
 
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-3xl font-bold">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h1 className="text-2xl font-bold text-gray-950 sm:text-3xl">
             Data Parser
           </h1>
 
           <Link
             href="/users"
-            className="px-5 py-3 bg-blue-700 text-white rounded-lg cursor-pointer"
+            className="inline-flex justify-center rounded-lg bg-blue-700 px-5 py-3 text-center font-medium text-white"
           >
             Show DB Data
           </Link>
@@ -117,11 +117,11 @@ export default function Home() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Paste one or multiple records here..."
-          className="w-full border rounded-lg p-4 h-52 outline-none"
+          className="h-52 w-full rounded-lg border border-gray-300 bg-white p-4 text-base text-gray-950 outline-none placeholder:text-gray-500"
         />
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <span className="font-medium">Tag</span>
+          <span className="font-medium text-gray-950">Tag</span>
 
           {(["Retail", "Wholesale"] as const).map((option) => (
             <label
@@ -157,7 +157,7 @@ export default function Home() {
             value={amount}
             onChange={(e) => handleAmountChange(e.target.value)}
             placeholder="Enter amount"
-            className="w-full border rounded-lg p-3 outline-none"
+            className="w-full rounded-lg border border-gray-300 bg-white p-3 text-base text-gray-950 outline-none placeholder:text-gray-500"
           />
         </div>
 
@@ -176,7 +176,7 @@ export default function Home() {
             </h2>
 
             <div className="overflow-x-auto">
-              <table className="w-full border border-collapse">
+              <table className="min-w-[760px] w-full border border-collapse text-sm text-gray-950 sm:text-base">
 
                 <thead>
                   <tr className="bg-gray-200">
@@ -196,7 +196,7 @@ export default function Home() {
                     <tr key={result._id ?? `${result.mobile}-${result.pincode}-${index}`}>
                       <td className="border p-3">{result.name}</td>
                       <td className="border p-3">{result.mobile}</td>
-                      <td className="border p-3">{result.address}</td>
+                      <td className="border p-3 break-words">{result.address}</td>
                       <td className="border p-3">{result.pincode}</td>
                       <td className="border p-3">{result.city}</td>
                       <td className="border p-3">{result.state}</td>
