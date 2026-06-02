@@ -117,7 +117,7 @@ export default function Home() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Paste one or multiple records here..."
-          className="h-52 w-full rounded-lg border border-gray-300 bg-white p-4 text-base text-gray-950 outline-none placeholder:text-gray-500"
+          className="h-52 w-full rounded-lg border border-gray-300 bg-white p-4 text-base text-black outline-none placeholder:text-gray-500"
         />
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -157,7 +157,7 @@ export default function Home() {
             value={amount}
             onChange={(e) => handleAmountChange(e.target.value)}
             placeholder="Enter amount"
-            className="w-full rounded-lg border border-gray-300 bg-white p-3 text-base text-gray-950 outline-none placeholder:text-gray-500"
+            className="w-full rounded-lg border border-gray-300 bg-white p-3 text-base text-black outline-none placeholder:text-gray-500"
           />
         </div>
 
