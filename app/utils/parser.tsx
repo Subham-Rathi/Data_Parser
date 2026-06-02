@@ -5,43 +5,27 @@ type ParsedData = {
   pincode: string;
 };
 
-const hasContactData = (text: string): boolean => {
-  return /\b[6-9]\d{9}\b/.test(text) || /\b\d{6}\b/.test(text);
-};
+const FIELD_LABELS = [
+  "Name",
+  "Mobile",
+  "Phone no\\.?",
+  "Phone",
+  "Contact no\\.?",
+  "Contact",
+  "Address",
+  "H\\.no\\.?",
+  "H no\\.?",
+  "Pin code",
+  "Pincode",
+];
+
+const LABEL_SEPARATOR = "\\s*(?::\\s*-?|-)\\s*";
+const FIELD_LABEL_PATTERN = FIELD_LABELS.join("|");
 
 function splitBulkUserData(text: string): string[] {
   const cleanText = text.replace(/\r/g, "").trim();
 
   if (!cleanText) return [];
-
-  const blankLineChunks = cleanText
-    .split(/\n\s*\n+/)
-    .map((chunk) => chunk.trim())
-    .filter(Boolean);
-
-  if (blankLineChunks.length > 1) {
-    return blankLineChunks;
-  }
-
-  const nameChunks = cleanText
-    .split(/(?=\bName\s*:)/i)
-    .map((chunk) => chunk.trim())
-    .filter(Boolean);
-
-  if (nameChunks.length > 1) {
-    return nameChunks;
-  }
-
-  const lines = cleanText
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-
-  const contactLines = lines.filter(hasContactData);
-
-  if (lines.length > 1 && contactLines.length === lines.length) {
-    return lines;
-  }
 
   return [cleanText];
 }
@@ -56,19 +40,19 @@ export function parseUserDataAdvanced(text: string): ParsedData {
     pincode: "",
   };
 
-  const getValue = (label: string): string => {
+  const getValue = (labels: string[]): string => {
     const regex = new RegExp(
-      `${label}:\\s*(.*?)(?=\\s+[A-Za-z ]+:|$)`,
+      `(?:${labels.join("|")})${LABEL_SEPARATOR}([\\s\\S]*?)(?=\\s*(?:${FIELD_LABEL_PATTERN})${LABEL_SEPARATOR}|$)`,
       "i"
     );
     const match = cleanText.match(regex);
-    return match ? match[1].trim() : "";
+    return match ? cleanFieldValue(match[1]) : "";
   };
 
-  data.name = getValue("Name");
-  data.mobile = getValue("Mobile");
-  data.address = getValue("Address");
-  data.pincode = getValue("Pin code");
+  data.name = getValue(["Name"]);
+  data.mobile = getValue(["Mobile", "Phone no\\.?", "Phone", "Contact no\\.?", "Contact"]);
+  data.address = getValue(["Address", "H\\.no\\.?", "H no\\.?"]);
+  data.pincode = getValue(["Pin code", "Pincode"]);
 
   // fallback mobile
   if (!data.mobile) {
@@ -80,6 +64,10 @@ export function parseUserDataAdvanced(text: string): ParsedData {
   if (!data.pincode) {
     const match = cleanText.match(/\b\d{6}\b/);
     if (match) data.pincode = match[0];
+  }
+
+  if (data.address) {
+    data.address = removeKnownValues(data.address, data.mobile, data.pincode);
   }
 
   const lines = cleanText.split("\n").map(l => l.trim()).filter(Boolean);
@@ -95,9 +83,12 @@ export function parseUserDataAdvanced(text: string): ParsedData {
     if (data.mobile) temp = temp.replace(data.mobile, "");
     if (data.pincode) temp = temp.replace(data.pincode, "");
 
-    temp = temp.replace(/Name:|Mobile:|Address:|Pin code:/gi, "");
+    temp = temp.replace(
+      new RegExp(`(?:${FIELD_LABEL_PATTERN})${LABEL_SEPARATOR}`, "gi"),
+      ""
+    );
 
-    data.address = temp.trim();
+    data.address = cleanFieldValue(temp);
   }
 
   return data;
@@ -105,4 +96,21 @@ export function parseUserDataAdvanced(text: string): ParsedData {
 
 export function parseBulkUserDataAdvanced(text: string): ParsedData[] {
   return splitBulkUserData(text).map(parseUserDataAdvanced);
+}
+
+function removeKnownValues(value: string, mobile: string, pincode: string): string {
+  let cleanValue = value;
+
+  if (mobile) cleanValue = cleanValue.replace(mobile, "");
+  if (pincode) cleanValue = cleanValue.replace(pincode, "");
+
+  return cleanFieldValue(cleanValue);
+}
+
+function cleanFieldValue(value: string): string {
+  return value
+    .replace(/\s+/g, " ")
+    .replace(/^\s*[:-]+\s*/, "")
+    .replace(/\s*[:-]+\s*$/, "")
+    .trim();
 }
