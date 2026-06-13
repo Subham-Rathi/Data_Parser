@@ -49,7 +49,7 @@ export function parseUserDataAdvanced(text: string): ParsedData {
     return match ? cleanFieldValue(match[1]) : "";
   };
 
-  data.name = getValue(["Name"]);
+  data.name = cleanNameValue(getValue(["Name"]));
   data.mobile = getValue(["Mobile", "Phone no\\.?", "Phone", "Contact no\\.?", "Contact"]);
   data.address = getValue(["Address", "H\\.no\\.?", "H no\\.?"]);
   data.pincode = getValue(["Pin code", "Pincode"]);
@@ -73,7 +73,7 @@ export function parseUserDataAdvanced(text: string): ParsedData {
   const lines = cleanText.split("\n").map(l => l.trim()).filter(Boolean);
 
   if (!data.name && lines.length > 0) {
-    data.name = lines[0];
+    data.name = cleanNameValue(lines[0]);
   }
 
   if (!data.address) {
@@ -113,4 +113,10 @@ function cleanFieldValue(value: string): string {
     .replace(/^\s*[:-]+\s*/, "")
     .replace(/\s*[:-]+\s*$/, "")
     .trim();
+}
+
+function cleanNameValue(value: string): string {
+  const cleanValue = cleanFieldValue(value);
+
+  return /\d/.test(cleanValue) ? "" : cleanValue;
 }

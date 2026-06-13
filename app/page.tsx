@@ -200,8 +200,8 @@ export default function Home() {
                       <td className="border p-3">{result.pincode}</td>
                       <td className="border p-3">{result.city}</td>
                       <td className="border p-3">{result.state}</td>
-                      <td className="border p-3">{result.tag}</td>
-                      <td className="border p-3">{result.amount}</td>
+                      <td className="border p-3"><b>{result.tag}</b></td>
+                      <td className="border p-3"><b>{result.amount}</b></td>
                     </tr>
                   ))}
                 </tbody>
