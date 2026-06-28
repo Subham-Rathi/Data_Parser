@@ -52,7 +52,7 @@ export function parseUserDataAdvanced(text: string): ParsedData {
   data.name = cleanNameValue(getValue(["Name"]));
   data.mobile = getValue(["Mobile", "Phone no\\.?", "Phone", "Contact no\\.?", "Contact"]);
   data.address = getValue(["Address", "H\\.no\\.?", "H no\\.?"]);
-  data.pincode = getValue(["Pin code", "Pincode"]);
+  data.pincode = cleanPincodeValue(getValue(["Pin code", "Pincode"]));
 
   // fallback mobile
   if (!data.mobile) {
@@ -63,7 +63,7 @@ export function parseUserDataAdvanced(text: string): ParsedData {
   // fallback pincode
   if (!data.pincode) {
     const match = cleanText.match(/\b\d{6}\b/);
-    if (match) data.pincode = match[0];
+    if (match) data.pincode = cleanPincodeValue(match[0]);
   }
 
   if (data.address) {
@@ -119,4 +119,10 @@ function cleanNameValue(value: string): string {
   const cleanValue = cleanFieldValue(value);
 
   return /\d/.test(cleanValue) ? "" : cleanValue;
+}
+
+function cleanPincodeValue(value: string): string {
+  const cleanValue = cleanFieldValue(value);
+
+  return /^\d{6}$/.test(cleanValue) ? cleanValue : "";
 }
